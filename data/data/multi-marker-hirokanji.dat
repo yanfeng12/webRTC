@@ -1,5 +1,5 @@
 #the number of patterns to be recognized
-3
+2
 
 #marker 1
 patt.hiro
@@ -10,13 +10,6 @@ patt.hiro
 
 #marker 2
 patt.kanji
-1.0
-1.0000 0.0000 0.0000    2.0000
-0.0000 1.0000 0.0000    0.0000
-0.0000 0.0000 1.0000    0.0000
-
-#marker 3
-patt.horse
 1.0
 1.0000 0.0000 0.0000    2.0000
 0.0000 1.0000 0.0000    0.0000
