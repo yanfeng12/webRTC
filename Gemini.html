@@ -1,0 +1,21 @@
+<!DOCTYPE html>  
+<html>  
+  <head>  
+    <meta charset="utf-8">  
+    <script src="aframe.min.js"></script>  
+    <script src="aframe-extras.loaders.min.js"></script>  
+  </head>  
+  <body>  
+    <a-scene>  
+    <a-assets>  
+        <a-asset-item id="myModelObj" src="Gemini.obj"></a-asset-item>  
+        <a-asset-item id="myModelMtl" src="Gemini.mtl"></a-asset-item>  
+     </a-assets>  
+      
+    <a-entity obj-model="obj: #myModelObj; mtl: #myModelMtl" scale="1 1 1" position="-30 -15 -30" rotation="0 0 0"></a-entity>  
+
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>  
+<a-sky color="#ECECEC"></a-sky>  
+</a-scene>  
+</body>  
+</html>  
