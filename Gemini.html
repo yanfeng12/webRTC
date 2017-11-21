@@ -10,7 +10,7 @@ THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 var mtlLoader = new THREE.MTLLoader();  
 //设置路径，也可不是设置，在load中加载完整路径也可  
     //mtlLoader.setPath( 'obj/male02/' );  
-    mtlLoader.load( 'https://yanfeng12.github.io/webRTC/Gemini.mtl',   
+    mtlLoader.load( 'Gemini.mtl',   
  // 资源加载成功后执行的函数   
              //@params materials THREE.MTLLoader.MaterialCreator  
                       function( materials ) {  
@@ -18,7 +18,7 @@ var mtlLoader = new THREE.MTLLoader();
                 var objLoader = new THREE.OBJLoader();  
                     objLoader.setMaterials( materials );  
                     //objLoader.setPath( 'obj/male02/' );  
-                    objLoader.load( 'https://yanfeng12.github.io/webRTC/Gemini.obj', function ( object ) {  
+                    objLoader.load( 'Gemini.obj', function ( object ) {  
                         object.position.y = - 95;  
                         scene.add( object );  
                     });  
