@@ -8,6 +8,7 @@
     <a-assets>  
         <a-asset-item id="myModelObj" src="Gemini.obj"></a-asset-item>  
         <a-asset-item id="myModelMtl" src="Gemini.mtl"></a-asset-item> 
+        <a-asset-item id="myPlyModel" src="bunny.ply"></a-asset-item>
         <img id="skyTexture" src="sechelt.jpg">
      </a-assets>  
       
@@ -16,6 +17,7 @@
         <a-animation attribute="rotation" begin="click" dur="7200" to="-10 570 -15" ></a-animation>
           
       </a-entity> 
+        <a-entity ply-model="src: #myPlyModel" position="0 1 -1" scale="0.01 0.01 0.01" rotation="-90 0 0"></a-entity>
 
       <a-sky src="#skyTexture" ></a-sky>
       <a-text value="rebey.cn 端午节快乐！" color="#CCC" 
