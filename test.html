@@ -1,33 +1,27 @@
-<html>
-<head>
-    <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
-</head>
-<body>
-<a-scene>
-<a-assets>
-    <img id="boxTexture" src="https://i.imgur.com/mYmmbrp.jpg">
-    <img id="skyTexture"
-      src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg">
-    <img id="groundTexture" src="https://cdn.aframe.io/a-painter/images/floor.jpg">
-  </a-assets>
-    <a-box position="0 2 -5" rotation="0 45 45" scale="2 2 2" src="#boxTexture">
-        <a-animation attribute="position" direction="alternate" dur="2000" repeat="indefinite" to="0 2.2 -5"></a-animation>
-        <a-animation attribute="rotation" begin="click" dur="2000" to="360 405 45"></a-animation>
-        <a-animation attribute="scale" begin="mouseenter" dur="300" to="2.3 2.3 2.3"></a-animation>
-        <a-animation attribute="scale" begin="mouseleave" dur="300" to="2 2 2"></a-animation>
-    </a-box>
-  <a-camera>
-    <a-cursor></a-cursor>
-  </a-camera>
-  <a-sky src="#skyTexture"></a-sky>
-  <a-plane src="#groundTexture" rotation="-90 0 0" width="30" height="30"
-  repeat="10 10"></a-plane>
-  <a-light type="ambient" color="#445451"></a-light>
-  <a-light type="point" intensity="2" position="2 4 4"></a-light>
-  <a-sound src="https://cdn.aframe.io/basic-guide/audio/backgroundnoise.wav" autoplay="true"
-    position="-3 1 -4"></a-sound>
-  <a-text value="buzhichizhongwen!" color="#BBB"
-        position="-0.9 0.2 -3" scale="1.5 1.5 1.5"></a-text>
-</a-scene>
-</body>
-</html>
+<html>  
+  <head>  
+    <script src="aframe.min.js"></script>  
+    <script src="aframe-extras.loaders.min.js"></script>  
+  </head>  
+  <body>  
+    <a-scene>  
+    <a-assets>  
+        <a-asset-item id="myModelObj" src="Gemini.obj"></a-asset-item>  
+        <a-asset-item id="myModelMtl" src="Gemini.mtl"></a-asset-item>  
+     </a-assets>  
+      
+    <a-entity position="0 1.2 -5" scale="0.035 0.035 0.035" rotation="-10 -150 -15" obj-model="obj: #myModelObj; mtl: #myModelMtl">
+        <a-animation attribute="position" to="0 1.4 -5" direction="alternate" dur="2000" repeat="indefinite"></a-animation>
+        <a-animation attribute="rotation" begin="click" dur="7200" to="-10 570 -15" ></a-animation>
+          
+      </a-entity> 
+
+      
+      <a-text value="rebey.cn 端午节快乐！" color="#CCC" 
+        position="-0.9 0.2 -3" scale="2 2 2"></a-text>
+        <a-camera>
+        <a-cursor></a-cursor>
+      </a-camera>
+</a-scene>  
+</body>  
+</html>  
