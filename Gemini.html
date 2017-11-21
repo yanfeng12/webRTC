@@ -6,19 +6,12 @@
   <body>  
     <a-scene>  
     <a-assets>  
-        <a-asset-item id="myModelObj" src="Gemini.obj"></a-asset-item>  
-        <a-asset-item id="myModelMtl" src="Gemini.mtl"></a-asset-item> 
-        <a-asset-item id="myPlyModel" src="bunny.ply"></a-asset-item>
+        <a-asset-item id="myModelObj" src="https://yanfeng12.github.io/webRTC/Gemini.obj"></a-asset-item>  
+        <a-asset-item id="myModelMtl" src="https://yanfeng12.github.io/webRTC/Gemini.mtl"></a-asset-item> 
+        <a-asset-item id="myPlyModel" src="https://yanfeng12.github.io/webRTC/bunny.ply"></a-asset-item>
         <img id="skyTexture" src="sechelt.jpg">
         <img id="boxTexture" src="https://i.imgur.com/mYmmbrp.jpg">
      </a-assets>  
-      <a-box position="0 2 -5" rotation="0 45 45" scale="2 2 2" src="#boxTexture">
-        <a-animation attribute="position" direction="alternate" dur="2000" repeat="indefinite" to="0 2.2 -5"></a-animation>
-        <a-animation attribute="rotation" begin="click" dur="2000" to="360 405 45"></a-animation>
-        <a-animation attribute="scale" begin="mouseenter" dur="300" to="2.3 2.3 2.3"></a-animation>
-        <a-animation attribute="scale" begin="mouseleave" dur="300" to="2 2 2"></a-animation>
-    </a-box>
-        
     <a-entity position="0 1.2 -5" scale="0.01 0.01 0.01" rotation="-10 -150 -15" obj-model="obj: #myModelObj; mtl: #myModelMtl">
         <a-animation attribute="position" to="0 1.4 -5" direction="alternate" dur="2000" repeat="indefinite"></a-animation>
         <a-animation attribute="rotation" begin="click" dur="7200" to="-10 570 -15" ></a-animation>
