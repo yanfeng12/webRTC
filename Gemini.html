@@ -1,13 +1,14 @@
 <html>  
   <head>  
-    <script src="aframe.min.js"></script>  
+    <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>  
     <script src="aframe-extras.loaders.min.js"></script>  
   </head>  
   <body>  
     <a-scene>  
     <a-assets>  
         <a-asset-item id="myModelObj" src="Gemini.obj"></a-asset-item>  
-        <a-asset-item id="myModelMtl" src="Gemini.mtl"></a-asset-item>  
+        <a-asset-item id="myModelMtl" src="Gemini.mtl"></a-asset-item> 
+        <img id="skyTexture" src="sechelt.jpg">
      </a-assets>  
       
     <a-entity position="0 1.2 -5" scale="0.035 0.035 0.035" rotation="-10 -150 -15" obj-model="obj: #myModelObj; mtl: #myModelMtl">
@@ -16,7 +17,7 @@
           
       </a-entity> 
 
-      
+      <a-sky src="#skyTexture" ></a-sky>
       <a-text value="rebey.cn 端午节快乐！" color="#CCC" 
         position="-0.9 0.2 -3" scale="2 2 2"></a-text>
         <a-camera>
