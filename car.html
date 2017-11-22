@@ -114,15 +114,30 @@
         window.addEventListener( 'resize', onWindowResize, false );  
         
 
-        var skyBoxGeometry = new THREE.BoxGeometry( 5000, 5000, 5000 );  
+        //var skyBoxGeometry = new THREE.BoxGeometry( 5000, 5000, 5000 );  
   
-        var skytexture = new THREE.TextureLoader().load("sechelt.jpg");  
+        //var skytexture = new THREE.TextureLoader().load("sechelt.jpg");  
   
-        var skyBoxMaterial = new THREE.MeshBasicMaterial( { map:skytexture, side: THREE.DoubleSide } );  
+        //var skyBoxMaterial = new THREE.MeshBasicMaterial( { map:skytexture, side: THREE.DoubleSide } );  
   
-        var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );  
+        //var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );  
   
-        scene.add(skyBox); 
+        //scene.add(skyBox); 
+        
+        
+        var cube = new THREE.Mesh(new THREE.CubeGeometry(1,2,3),
+
+　　new THREE.MeshBasicMaterial({
+　
+　　　　color: 0xff0000
+
+　　})
+
+);
+
+scene.add(cube);
+        
+        
         
   
     }  
