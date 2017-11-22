@@ -114,6 +114,15 @@
         window.addEventListener( 'resize', onWindowResize, false );  
         
 
+        var skyBoxGeometry = new THREE.BoxGeometry( 5000, 5000, 5000 );  
+  
+        var skytexture = new THREE.TextureLoader().load("sechelt.jpg");  
+  
+        var skyBoxMaterial = new THREE.MeshBasicMaterial( { map:skytexture, side: THREE.DoubleSide } );  
+  
+        var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );  
+  
+        scene.add(skyBox); 
         
   
     }  
