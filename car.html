@@ -5,7 +5,11 @@
       <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
     <script src="js/aframe-extras.js"></script>
     <script src="js/aframe-text-geometry-component.min.js"></script>
-  
+    
+  <style type="text/css">
+body {background-image:url(sechelt.jpg);}
+</style>
+    
 </head>  
   
 <body>  
@@ -112,30 +116,7 @@
   
         window.addEventListener( 'resize', onWindowResize, false );  
         
-        
-        
-        
-        
-          var loader = new THREE.TextureLoader();
-                loader.setCrossOrigin( this.crossOrigin );
-                var texture = loader.load( "sechelt.jpg", function(){}, undefined, function(){} );
-                 
-                skyMaterials.push(new THREE.MeshBasicMaterial({
-                    //map: THREE.ImageUtils.loadTexture(urls[i], {},function() { }), 
-                    map: texture, 
-                    overdraw: true,
-                    side: THREE.BackSide,
-                    //transparent: true,
-                    //needsUpdate:true,
-                    premultipliedAlpha: true
-                    //depthWrite:true,
-                     
-    //              wireframe:false,
-                })
-                ); 
-        var cube = new THREE.Mesh(new THREE.CubeGeometry(4000, 4000,4000), new THREE.MeshFaceMaterial(skyMaterials)); 
-        cube.name="sky";
-        scene.add(cube);
+
         
   
     }  
