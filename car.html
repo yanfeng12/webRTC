@@ -110,7 +110,17 @@
   
         //  
   
-        //window.addEventListener( 'resize', onWindowResize, false );  
+        window.addEventListener( 'resize', onWindowResize, false );  
+        
+        var skyBoxGeometry = new THREE.BoxGeometry( 5000, 5000, 5000 );  
+  
+        var texture = new THREE.TextureLoader().load("sechelt.jpg");  
+  
+        var skyBoxMaterial = new THREE.MeshBasicMaterial( { map:texture, side: THREE.DoubleSide } );  
+  
+        var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );  
+  
+        scene.add(skyBox);  
   
     }  
   
@@ -152,16 +162,10 @@
         renderer.render( scene, camera );  
   
     }  
+    
   
 </script>  
-       <a-assets>
-    <img id="sky" src="sechelt.jpg">   
- 
-    </a-assets>
-    <a-sky src="#sky" rotation="0 -90 0"></a-sky>
-    <a-entity
-        geometry="primitive: plane; width: 10000; height: 10000;" rotation="-90 0 0"
-        material="src: #grid; repeat: 10000 10000; transparent: true;metalness:0.6; roughness: 0.4; sphericalEnvMap: #sky;"></a-entity>
+
        
 </body>  
   
