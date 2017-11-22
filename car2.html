@@ -41,11 +41,12 @@ var mtlLoader = new THREE.MTLLoader();
 var objLoader = new THREE.OBJLoader();  
     objLoader.setMaterials( materials );   
     objLoader.load( 'Gemini.obj', function ( object ) {  
+        mesh = object;//储存到全局变量中
         scene.add( object );  
   
         }, onProgress, onError );  
   
-                });  
+ });  
                 
                 var light = new THREE.DirectionalLight(0xffffff);//光源颜色
                 light.position.set(20, 10, 5);//光源位置
