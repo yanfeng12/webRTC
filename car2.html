@@ -26,24 +26,26 @@
                 
                
                 
-                var mtlLoader = new THREE.MTLLoader();  
-                mtlLoader.load( 'Gemini.mtl', function( materials ) {  
-                materials.preload();  
-        
-                
-                var loader = new THREE.OBJLoader();//在init函数中，创建loader变量，用于导入模型
-                loader.load('Gemini.obj', function(obj) {//第一个表示模型路径，第二个表示完成导入后的回调函数，一般我们需要在这个回调函数中将导入的模型添加到场景中
-                    obj.traverse(function(child) {
-                        if (child instanceof THREE.Mesh) {
-                            child.material.side = THREE.DoubleSide;
-                            
-                        }
-                    });
-                
-                    //mesh = obj;//储存到全局变量中
-                    scene.add(obj);//将导入的模型添加到场景中
-                });
-                });
+var onProgress = function ( xhr ) {  
+        if ( xhr.lengthComputable ) {  
+            var percentComplete = xhr.loaded / xhr.total * 100;  
+                    }  
+                };  
+  
+var onError = function ( xhr ) { };  
+var mtlLoader = new THREE.MTLLoader();  
+
+    mtlLoader.load( 'Gemini.mtl', function( materials ) {  
+    materials.preload();  
+  
+var objLoader = new THREE.OBJLoader();  
+    objLoader.setMaterials( materials );   
+    objLoader.load( 'Gemini.obj', function ( object ) {  
+        scene.add( object );  
+  
+        }, onProgress, onError );  
+  
+                });  
                 
                 var light = new THREE.DirectionalLight(0xffffff);//光源颜色
                 light.position.set(20, 10, 5);//光源位置
