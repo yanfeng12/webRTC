@@ -50,7 +50,7 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
             navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
     </script>
     
-<!--<div id="container"></div>  -->
+<div id="container"></div>  
 <script>  
 //    var container;  
   
@@ -68,8 +68,8 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
   
     function init() {  
   
-//        container = document.createElement( 'div' );  
-//        document.body.appendChild( container );  
+        container = document.createElement( 'div' );  
+        document.body.appendChild( container );  
   
         camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );  
         camera.position.z = 10;  
@@ -141,10 +141,10 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
         renderer = new THREE.WebGLRenderer();  
         renderer.setPixelRatio( window.devicePixelRatio );  
         renderer.setSize( window.innerWidth, window.innerHeight );  
-        
-        var video = document.querySelector('video');
-        video.appendChild( renderer.domElement );  
-  
+        container.appendChild( renderer.domElement ); 
+//        var video = document.querySelector('video');
+//        video.appendChild( renderer.domElement );  
+//  
         //document.addEventListener( 'mousemove', onDocumentMouseMove, false );  
   
         //  
