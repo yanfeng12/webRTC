@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <title>web调取摄像头</title>
     
-            <script type="text/javascript" src="js/three.min.js"></script>
-        <script src="js/OBJLoader.js"></script>
-        <script src="js/MTLLoader.js"></script> 
-
+          <script src="https://aframe.io/releases/0.5.0/aframe.min.js"></script>
+    <script src="js/aframe-extras.js"></script>
+    <script src="js/aframe-text-geometry-component.min.js"></script>
+    <script src="js/OBJLoader.js"></script>
+    <script src="js/MTLLoader.js"></script> 
+    
 </head>
 <body>
     <video src=""></video>
@@ -48,67 +50,167 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
             navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
     </script>
     
-    
-          <script type="text/javascript">
-            var scene = null;
-            var camera = null;
-            var renderer = null;
-            
-            var mesh = null;
-            var id = null;
-            
-            function init() {
-                renderer = new THREE.WebGLRenderer({//渲染器
-                    canvas: document.querySelector('video')//画布
-                });
-//                renderer.setClearColor(0x000000);//画布颜色
-                scene = new THREE.Scene();//创建场景
-                
-                camera = new THREE.OrthographicCamera(-5, 5, 3.75, -3.75, 0.1, 100);//正交投影照相机
-                camera.position.set(15, 25, 25);//相机位置
-                camera.lookAt(new THREE.Vector3(0, 2, 0));//lookAt()设置相机所看的位置
-                scene.add(camera);//把相机添加到场景中
-                
-               
-                
-var onProgress = function ( xhr ) {  
-        if ( xhr.lengthComputable ) {  
-            var percentComplete = xhr.loaded / xhr.total * 100;  
-                    }  
-                };  
+<!--<div id="container"></div>  -->
+<script>  
+//    var container;  
   
-var onError = function ( xhr ) { };  
-var mtlLoader = new THREE.MTLLoader();  
-
-    mtlLoader.load( 'Gemini.mtl', function( materials ) {  
-    materials.preload();  
+    var camera, scene, renderer;  
   
-var objLoader = new THREE.OBJLoader();  
-    objLoader.setMaterials( materials );   
-    objLoader.load( 'Gemini.obj', function ( object ) {  
-        mesh = object;//储存到全局变量中
-        scene.add( object );  
+    var mouseX = 0, mouseY = 0;  
+  
+    var windowHalfX = window.innerWidth / 2;  
+    var windowHalfY = window.innerHeight / 2;  
+  
+  
+    init();  
+    animate();  
+  
+  
+    function init() {  
+  
+//        container = document.createElement( 'div' );  
+//        document.body.appendChild( container );  
+  
+        camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );  
+        camera.position.z = 10;  
+  
+        // scene  
+  
+        scene = new THREE.Scene();  
+  
+        var ambient = new THREE.AmbientLight( 0x101030 );  
+        scene.add( ambient );  
+  
+        var directionalLight = new THREE.DirectionalLight( 0xffeedd );  
+        directionalLight.position.set( 0, 0, 1 );  
+        scene.add( directionalLight );  
+  
+        // texture  
+  
+        var manager = new THREE.LoadingManager();  
+        manager.onProgress = function ( item, loaded, total ) {  
+  
+            console.log( item, loaded, total );  
+  
+        };  
+  
+        var texture = new THREE.Texture();  
+  
+        var onProgress = function ( xhr ) {  
+            if ( xhr.lengthComputable ) {  
+                var percentComplete = xhr.loaded / xhr.total * 100;  
+                console.log( Math.round(percentComplete, 2) + '% downloaded' );  
+            }  
+        };  
+  
+        var onError = function ( xhr ) {  
+        };  
+  
+  
+        var loader = new THREE.ImageLoader( manager );  
+        loader.load( 'maps/orbital.png', function ( image ) {  
+  
+            texture.image = image;  
+            texture.needsUpdate = true;  
+  
+        } );  
+  
+        // model  
+  
+        var loader = new THREE.OBJLoader( manager );  
+        loader.load( 'Gemini.obj', function ( object ) {  
+  
+            object.traverse( function ( child ) {  
+  
+                if ( child instanceof THREE.Mesh ) {  
+  
+                    child.material.map = texture;  
+  
+                }  
+  
+            } );  
+            object.scale.x =  object.scale.y =  object.scale.z = 2;  
+            object.updateMatrix();  
+            object.position.y = -3;  
+            scene.add( object );  
   
         }, onProgress, onError );  
   
- });  
-                
-                var light = new THREE.DirectionalLight(0xffffff);//光源颜色
-                light.position.set(20, 10, 5);//光源位置
-                scene.add(light);//光源添加到场景中
-                
-                id = setInterval(draw, 20);//每隔20s重绘一次
-            }
-            
-            function draw() {//们在重绘函数中让茶壶旋转：
-                renderer.render(scene, camera);//调用WebGLRenderer的render函数刷新场景
-                
-                mesh.rotation.y += 0.01;//添加动画
-                if (mesh.rotation.y > Math.PI * 2) {
-                    mesh.rotation.y -= Math.PI * 2;
-                }
-            }
-</script>
-    <button onclick="init()">Click me</button>
+        //  
+  
+        renderer = new THREE.WebGLRenderer();  
+        renderer.setPixelRatio( window.devicePixelRatio );  
+        renderer.setSize( window.innerWidth, window.innerHeight );  
+        
+        var video = document.querySelector('video');
+        video.appendChild( renderer.domElement );  
+  
+        //document.addEventListener( 'mousemove', onDocumentMouseMove, false );  
+  
+        //  
+  
+        window.addEventListener( 'resize', onWindowResize, false );  
+        
+
+        //var skyBoxGeometry = new THREE.BoxGeometry( 5000, 5000, 5000 );  
+  
+        //var skytexture = new THREE.TextureLoader().load("sechelt.jpg");  
+  
+        //var skyBoxMaterial = new THREE.MeshBasicMaterial( { map:skytexture, side: THREE.DoubleSide } );  
+  
+        //var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );  
+  
+        //scene.add(skyBox); 
+        
+        
+        
+        
+        
+  
+    }  
+  
+    function onWindowResize() {  
+  
+        windowHalfX = window.innerWidth / 2;  
+        windowHalfY = window.innerHeight / 2;  
+  
+        camera.aspect = window.innerWidth / window.innerHeight;  
+        camera.updateProjectionMatrix();  
+  
+        renderer.setSize( window.innerWidth, window.innerHeight );  
+  
+    }  
+  
+    function onDocumentMouseMove( event ) {  
+  
+        mouseX = ( event.clientX - windowHalfX ) / 2;  
+        mouseY = ( event.clientY - windowHalfY ) / 2;  
+  
+    }  
+  
+    //  
+  
+    function animate() {  
+  
+        requestAnimationFrame( animate );  
+        render();  
+  
+    }  
+  
+    function render() {  
+  
+        camera.position.x += ( mouseX - camera.position.x ) * .5;  
+        camera.position.y += ( - mouseY - camera.position.y ) * .5;  
+  
+        camera.lookAt( scene.position );  
+  
+        renderer.render( scene, camera );  
+  
+    }  
+    
+  
+</script>  
+    
+
 </body>
 </html>
