@@ -73,7 +73,7 @@ var objLoader = new THREE.OBJLoader();
     
     
 </head>
-<body onload="init()">
+<body>
     <video src=""></video>
 <script>
     if (navigator.mediaDevices === undefined) {
@@ -111,5 +111,6 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
 
             navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
     </script>
+    <button onclick="init()">Click me</button>
 </body>
 </html>
