@@ -3,18 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>web调取摄像头</title>
-    
-       <style>  
-        .fj1  
-        {  
-            position: absolute;  
-        }  
-        .zj1  
-        {  
-            position: relative;  
-            z-index: 1;  
-        }  
-    </style>  
+
     
         <script type="text/javascript" src="js/three.min.js"></script>
         <script src="js/OBJLoader.js"></script>
@@ -83,9 +72,12 @@ var objLoader = new THREE.OBJLoader();
     
 </head>
 <body onload="init()">
-    <div class="fj1"> 
-    <video src=""></video>
-        </div> 
+    <div style='position:relative'>
+        
+        <div style='position:absolute; z-index:2;  '>
+        <video src=""></video>
+        </div>
+        
 <script>
     if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
@@ -123,9 +115,9 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
             navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
     </script>
 
-    <div class="zj1"> 
+    <div style='position:absolute; z-index:3; '>
     <canvas id="mainCanvas" width="800px" height="600px" ></canvas>
         </div>
-
+</div>
 </body>
 </html>
