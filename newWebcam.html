@@ -3,8 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <title>web调取摄像头</title>
+    
+            <script type="text/javascript" src="js/three.min.js"></script>
+        <script src="js/OBJLoader.js"></script>
+        <script src="js/MTLLoader.js"></script> 
+        
+        <script type="text/javascript">
+            var scene = null;
+            var camera = null;
+            var renderer = null;
+            
+            var mesh = null;
+            var id = null;
+            
+            function init() {
+                renderer = new THREE.WebGLRenderer({//渲染器
+                    canvas: document.querySelector('video')//画布
+                });
+//                renderer.setClearColor(0x000000);//画布颜色
+                scene = new THREE.Scene();//创建场景
+                
+                camera = new THREE.OrthographicCamera(-5, 5, 3.75, -3.75, 0.1, 100);//正交投影照相机
+                camera.position.set(15, 25, 25);//相机位置
+                camera.lookAt(new THREE.Vector3(0, 2, 0));//lookAt()设置相机所看的位置
+                scene.add(camera);//把相机添加到场景中
+                
+               
+                
+var onProgress = function ( xhr ) {  
+        if ( xhr.lengthComputable ) {  
+            var percentComplete = xhr.loaded / xhr.total * 100;  
+                    }  
+                };  
+  
+var onError = function ( xhr ) { };  
+var mtlLoader = new THREE.MTLLoader();  
+
+    mtlLoader.load( 'Gemini.mtl', function( materials ) {  
+    materials.preload();  
+  
+var objLoader = new THREE.OBJLoader();  
+    objLoader.setMaterials( materials );   
+    objLoader.load( 'Gemini.obj', function ( object ) {  
+        mesh = object;//储存到全局变量中
+        scene.add( object );  
+  
+        }, onProgress, onError );  
+  
+ });  
+                
+                var light = new THREE.DirectionalLight(0xffffff);//光源颜色
+                light.position.set(20, 10, 5);//光源位置
+                scene.add(light);//光源添加到场景中
+                
+                id = setInterval(draw, 20);//每隔20s重绘一次
+            }
+            
+            function draw() {//们在重绘函数中让茶壶旋转：
+                renderer.render(scene, camera);//调用WebGLRenderer的render函数刷新场景
+                
+                mesh.rotation.y += 0.01;//添加动画
+                if (mesh.rotation.y > Math.PI * 2) {
+                    mesh.rotation.y -= Math.PI * 2;
+                }
+            }
+</script>
+    
+    
+    
+    
 </head>
-<body>
+<body onload="init()">
     <video src=""></video>
 <script>
     if (navigator.mediaDevices === undefined) {
@@ -24,7 +93,8 @@
 window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
         var mediaOpts = {
             audio: false,
-            video: true,
+            // Prefer camera resolution nearest to 1280x720.
+            video: { width: 1280, height: 720 },
         }
             function successFunc(stream) {
                 var video = document.querySelector('video');
