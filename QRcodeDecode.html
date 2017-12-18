@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", function ()
         
         
         
-           if (navigator.mediaDevices === undefined) {
+    if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
     }
     if (navigator.mediaDevices.getUserMedia === undefined) {
@@ -65,11 +65,11 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
                 }
                 video.play();
             }
-            function errorFunc(err) {
-                alert(err.name);
-            }
+//            function errorFunc(err) {
+//                alert(err.name);
+//            }
 
-            navigator.getUserMedia(mediaOpts, successFunc, errorFunc);
+            navigator.getUserMedia(mediaOpts, successFunc, MediaErr);
 //        //获取媒体的兼容代码，目前只支持（Firefox,Chrome,Opera）  
 //        if (navigator.getUserMedia)  
 //        {  
@@ -149,7 +149,8 @@ function CatchCode() {
             {                   
                 printHtml("解析结果成功！");  
             }else{    
-                startPat();//如果没有解析出来则重新抓拍解析         
+                printHtml("解析结果："+base64Data); 
+//                startPat();//如果没有解析出来则重新抓拍解析         
             }  
        },"json");  
     }  
