@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>web调取摄像头</title>
+   <script type="text/javascript" src="js/three.min.js"></script>
+
+</head>
+<body>
+<form id="picForm" action="@Url.Action("scan")" method="post">
+    <input type="hidden" value="" id="code" name="code" />
+    <input type="hidden" value="" id="status" name="status" />
+    <section style="position: relative;">
+        <video width="100%" id="video" autoplay="autoplay"></video>
+        <div id="result" style="position: absolute; top: 0; left: 0;width:100%;height:100%;text-align: center;border:1px solid yellow;" onclick="scanCode();">
+            <section class="smtwo" style="text-align:center;">
+                <h3 ><a class="back" href="${ctx }/index/index.htm">
+                    <img src="images/smtwo_1.png" style="border: none" alt=""></a>请将扫描框对准设备或包装上的二维码 </h3>
+            </section>
+            <div id="getCode" style="margin:auto;width:200px;height:200px;border:1px solid red;"></div>
+            <canvas width="200" height="200" id="canvas"></canvas>
+        </div>
+    </section>
+    </form>
+    <script>
+        var video, canvas, videoObj;
+        window.addEventListener('DOMContentLoaded', function () {
+            'use strict';
+            //调取摄像头
+            navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+            if (navigator.getUserMedia) {
+                videoObj = { video: true };
+                video = document.getElementById("video");//  $("#video").get(0);
+                canvas = document.getElementById("canvas");// $("#canvas").get(0);
+                navigator.getUserMedia({
+                    video: true
+                }, gotStream, noStream);
+            } else {
+                alert('Native web camera streaming (getUserMedia) not supported in this browser.');
+            }
+            //调取摄像头成功的回调函数
+            function gotStream(stream) {
+                if (video.mozSrcObject !== undefined) {
+                    video.mozSrcObject = stream;
+                } else {
+                    video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+                }
+                video.play();
+                //启动摄像头成功之后开始获取二维码
+                scanCode();
+            }
+            //调取摄像头失败的回调函数
+            function noStream(error) {
+                alert('An error occurred: [CODE ' + error.code + ']');
+            }
+        }, false);
+        //抓取video画面放入canvas
+        function photograph() {
+            var context = canvas.getContext("2d");
+            // 截取取景框范围（这里用canvas做取景框）
+            //var x = canvas.clientLeft;
+            //var y = canvas.clientTop;
+            //context.drawImage(video,x, y, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+            var box = getBox();
+            context.drawImage(video, box.X, box.Y, box.W, box.H, 0, 0, box.W , box.H);
+            //imageConvertToGray(context);
+            var imgData = canvas.toDataURL("image/png");
+            $("#code").val(imgData);
+        }
+        function getBox() {
+            var box = $("#getCode");
+            var position = { X: $(box).offset().top, Y: $(box).offset().left, W: $(box).width(), H: $(box).height() };
+            return position
+        }
+        //将图片处理成黑白的（二维码扫描需要处理黑白色图片，如果仅用于拍照这一步就省略了）
+        function imageConvertToGray(ctx) {
+            var length = canvas.width * canvas.height;
+            imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < length * 4; i += 4) {
+                var myRed = imageData.data[i];
+                var myGreen = imageData.data[i + 1];
+                var myBlue = imageData.data[i + 2];
+                myGray = parseInt((myRed + myGreen + myBlue) / 3);
+                imageData.data[i] = myGray;
+                imageData.data[i + 1] = myGray;
+                imageData.data[i + 2] = myGray;
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+        function scanCode() {
+            //生成图片的base64码
+            photograph();
+            var data = { "code": $("#code").val() };
+            ajaxPostCompliate("@Url.Action("scan")", data, function (result) {
+                console.info("-----------result--------------" + result);
+                if (result != null) {//扫描出结果
+                    var obj = JSON.parse(result);
+                    if (obj.org != undefined) {
+                        location.href = "@Url.Action("ScanResult")?org=" + obj.org + "&tp=" + obj.tp + "&ad=" + obj.ad;
+                    } else {
+                        alert("该二维码非ME+授权编码");
+                    }
+                    
+                } else {//继续扫描
+                    setTimeout(function () {
+                        scanCode();
+                    }, 2000);
+                }
+            });
+        }
+    </script>
+    </body>
+</html>
