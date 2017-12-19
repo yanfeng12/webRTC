@@ -156,7 +156,7 @@ function CatchCode() {
         //以下开始编 数据     
         var imgData = canvas.toDataURL();   
         //将图像转换为base64数据  
-        var base64Data = imgData;//.substr(22); //在前端截取22位之后的字符串作为图像数据  
+        var base64Data = imgData.substr(22);//.substr(22); //在前端截取22位之后的字符串作为图像数据  
         printHtml("解析结果："+base64Data); 
         //开始异步上  
        $.post("saveimg.php", { "img": base64Data },function (result)  
