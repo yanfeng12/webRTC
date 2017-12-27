@@ -30,7 +30,7 @@ function init() {
     //第一个参数  拍摄距离
     //第二个参数  相机拍摄面的长宽比  一般用 宽/高
     //近裁剪面（near clipping plane） 和 远裁剪面（far clipping plane）最小范围  最大范围
-    camera = new THREE.PerspectiveCamera(50, 890/500, 0.1, 10000);
+    camera = new THREE.PerspectiveCamera(50, 1920/1080, 0.1, 10000);
     camera.position.set(1000, 0, 250);//  camera.position.set(0, 0, 250);
 //  camera.lookAt(new THREE.Vector3(0, 10, 0));//lookAt()设置相机所看的位置
     scene.add(camera);
