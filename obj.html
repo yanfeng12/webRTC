@@ -1,0 +1,142 @@
+<html>  
+<head lang="en">  
+    <meta charset="UTF-8">  
+    <title>Lession1</title>  
+    <script src="js/three.js"></script>  
+    <script src="js/three.min.js"></script>  
+    <script src="js/OBJLoader.js"></script>  
+  
+</head>  
+  
+<body> 
+<canvas id="scene" width="890px" height="500px">
+<script>
+/* http://mamboleoo.be/learnThree/ */
+
+var renderer, scene, camera, banana,orbitControls;
+
+var ww = window.innerWidth,
+        wh = window.innerHeight;
+function init() {
+
+    renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById('scene')
+    });
+    renderer.setClearColor(0x000000);//画布颜色
+   /*  renderer.setSize(ww, wh);//渲染器 */
+
+    scene = new THREE.Scene();//画布
+    //照相机
+    //第一个参数  拍摄距离
+    //第二个参数  相机拍摄面的长宽比  一般用 宽/高
+    //近裁剪面（near clipping plane） 和 远裁剪面（far clipping plane）最小范围  最大范围
+    camera = new THREE.PerspectiveCamera(50, 890/500, 0.1, 10000);
+    camera.position.set(1000, 0, 250);//  camera.position.set(0, 0, 250);
+//  camera.lookAt(new THREE.Vector3(0, 10, 0));//lookAt()设置相机所看的位置
+    scene.add(camera);
+
+    //环境光和平行光
+    var ambient = new THREE.AmbientLight( 0x101030 );
+    scene.add( ambient );
+
+    //Load the obj file
+    loadOBJ();
+    var orbitControls = new THREE.OrbitControls(camera);
+    orbitControls.target.set(0, 0, 0);
+    orbitControls.autoRotate = true;//设置平面自动旋转
+    window.addEventListener('mousewheel', mousewheel, false);
+}
+
+var loadDirectionLight=function(){
+    var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+    directionalLight.position.set( 0, 0, 1 );
+    scene.add( directionalLight );
+}
+var loadOBJ = function() {
+    //Manager from ThreeJs to track a loader and its status
+    var manager = new THREE.LoadingManager();
+    //Loader for Obj from Three.js
+    var loader = new THREE.OBJLoader(manager);
+    //Launch loading of the obj file, addBananaInScene is the callback when it's ready
+    /*   loader.setPath("/resource/template/spoc/normal/scripts/three/"); */
+    loader.load('yuying_obj.obj', addBananaInScene,onProgress);
+
+};
+
+var addBananaInScene = function(object) {
+    //设置模型的中心在模型的中点
+    banana = object;
+    banana.children[0].geometry.computeBoundingBox();
+    banana.rotation.x = THREE.Math.degToRad( 90 );
+    banana.children[0].geometry.center()
+    helper = new THREE.BoundingBoxHelper(banana, 0x0000000);
+    helper.update();
+    //设置结束
+    //Move the banana in the scene
+    //Go through all children of the loaded object and search for a Mesh
+    object.traverse(function(child) {
+        //This allow us to check if the children is an instance of the Mesh constructor
+        if (child instanceof THREE.Mesh) {
+            //Sometimes there are some vertex normals missing in the .obj files, ThreeJs will compute them
+            child.geometry.computeVertexNormals();
+        }
+    });
+    banana.scale.set(100, 100, 100);
+
+    banana.rotation.x = -0.3;
+    scene.add(helper);
+    //Add the 3D object in the scene
+    scene.add(banana);
+    render();
+};
+
+
+var render = function() {
+    requestAnimationFrame(render);
+
+    //Turn the banana
+     banana.rotation.y += .01;
+
+    renderer.render(scene, camera);
+};
+var onProgress = function ( xhr ) {
+    if ( xhr.lengthComputable ) {
+        var percentComplete = xhr.loaded / xhr.total * 100;
+        console.log( Math.round(percentComplete, 2) + '% downloaded' );
+    }
+};
+//鼠标滑轮
+function mousewheel(e) {
+    e.preventDefault();
+    //e.stopPropagation();
+    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
+        if (e.wheelDelta > 0) { //当滑轮向上滚动时
+            fov -= (near < fov ? 1 : 0);
+        }
+        if (e.wheelDelta < 0) { //当滑轮向下滚动时
+            fov += (fov < far ? 1 : 0);
+        }
+    } else if (e.detail) {  //Firefox滑轮事件
+        if (e.detail > 0) { //当滑轮向上滚动时
+            fov -= 1;
+        }
+        if (e.detail < 0) { //当滑轮向下滚动时
+            fov += 1;
+        }
+    }
+    camera.fov = fov;
+    camera.updateProjectionMatrix();
+    renderer.render(scene, camera);
+    //updateinfo();
+}
+
+$(function(){
+    init();
+    loadDirectionLight();
+})
+
+</script>
+</body>  
+  
+  
+</html>  
