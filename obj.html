@@ -12,7 +12,11 @@
 <canvas id="scene" width="1920px" height="1080px"></canvas>
 <script>
 /* http://mamboleoo.be/learnThree/ */
+var lon = 90, lat = 0;
+var phi = 0, theta = 0;
 
+var touchX, touchY;
+    
 var renderer, scene, camera, banana,orbitControls;
 
 var ww = window.innerWidth,
@@ -44,7 +48,7 @@ function init() {
 //    var orbitControls = new THREE.OrbitControls(camera);
 //    orbitControls.target.set(0, 0, 0);
 //    orbitControls.autoRotate = true;//设置平面自动旋转
-    window.addEventListener('mousewheel', mousewheel, false);
+//    window.addEventListener('mousewheel', mousewheel, false);
     
 
 
@@ -71,7 +75,7 @@ var addBananaInScene = function(object) {
     //设置模型的中心在模型的中点
     banana = object;
     banana.children[0].geometry.computeBoundingBox();
-//    banana.rotation.x = THREE.Math.degToRad( 90 );
+    banana.rotation.x = THREE.Math.degToRad( 90 );
     banana.children[0].geometry.center()
     helper = new THREE.BoxHelper(banana, 0x0000000);
     helper.update();
@@ -110,36 +114,123 @@ var onProgress = function ( xhr ) {
     }
 };
 //鼠标滑轮
-function mousewheel(e) {
-    e.preventDefault();
-    //e.stopPropagation();
-    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
-        if (e.wheelDelta > 0) { //当滑轮向上滚动时
-            fov -= (near < fov ? 1 : 0);
-        }
-        if (e.wheelDelta < 0) { //当滑轮向下滚动时
-            fov += (fov < far ? 1 : 0);
-        }
-    } else if (e.detail) {  //Firefox滑轮事件
-        if (e.detail > 0) { //当滑轮向上滚动时
-            fov -= 1;
-        }
-        if (e.detail < 0) { //当滑轮向下滚动时
-            fov += 1;
-        }
-    }
-    camera.fov = fov;
+//function mousewheel(e) {
+//    e.preventDefault();
+//    //e.stopPropagation();
+//    if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
+//        if (e.wheelDelta > 0) { //当滑轮向上滚动时
+//            fov -= (near < fov ? 1 : 0);
+//        }
+//        if (e.wheelDelta < 0) { //当滑轮向下滚动时
+//            fov += (fov < far ? 1 : 0);
+//        }
+//    } else if (e.detail) {  //Firefox滑轮事件
+//        if (e.detail > 0) { //当滑轮向上滚动时
+//            fov -= 1;
+//        }
+//        if (e.detail < 0) { //当滑轮向下滚动时
+//            fov += 1;
+//        }
+//    }
+//    camera.fov = fov;
+//    camera.updateProjectionMatrix();
+//    renderer.render(scene, camera);
+//    //updateinfo();
+//}
+//
+    // 初始化控制器
+function initMouseControl() {
+    // mouseControl = new THREE.OrbitControls(camera);
+    document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+    document.addEventListener( 'wheel', onDocumentMouseWheel, false );
+    document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+    document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+    window.addEventListener( 'resize', onWindowResize, false );
+
+}
+    
+    /**
+ * 窗体大小改变
+ */
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+/*
+相机焦点跟着鼠标或手指的操作移动
+ */
+function onDocumentMouseDown( event ) {
+    event.preventDefault();
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+
+}
+
+function onDocumentMouseMove( event ) {
+    var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
+    var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+    lon -= movementX * 0.1;
+    lat += movementY * 0.1;
+}
+
+function onDocumentMouseUp( event ) {
+    document.removeEventListener( 'mousemove', onDocumentMouseMove );
+    document.removeEventListener( 'mouseup', onDocumentMouseUp );
+}
+
+/**
+ * 鼠标滚轮改变相机焦距
+ */
+function onDocumentMouseWheel( event ) {
+    camera.fov += event.deltaY * 0.05;
+    camera.updateProjectionMatrix();
+}
+
+function onDocumentTouchStart( event ) {
+    event.preventDefault();
+    var touch = event.touches[ 0 ];
+    touchX = touch.screenX;
+    touchY = touch.screenY;
+
+}
+
+function onDocumentTouchMove( event ) {
+    event.preventDefault();
+    var touch = event.touches[ 0 ];
+    lon -= ( touch.screenX - touchX ) * 0.1;
+    lat += ( touch.screenY - touchY ) * 0.1;
+    touchX = touch.screenX;
+    touchY = touch.screenY;
+
+}
+
+/**
+ * 实时渲染函数
+ */
+function animate() {
+    requestAnimationFrame(animate);
+    // lon = Math.max(-180, Math.min(180, lon));//限制固定角度内旋转
+    // lon += 0.1;//自动旋转
+    lat = Math.max(-85, Math.min(85, lat)); //限制固定角度内旋转
+    phi = THREE.Math.degToRad(85 - lat);
+    theta = THREE.Math.degToRad(lon+180);
+    target.x = Math.sin(phi) * Math.cos(theta);
+    target.y = Math.cos(phi);
+    target.z = Math.sin(phi) * Math.sin(theta);
+    camera.lookAt( target );
     camera.updateProjectionMatrix();
     renderer.render(scene, camera);
-    //updateinfo();
 }
-//
-//$(function(){
-//    init();
-//    loadDirectionLight();
-//})
-init();
+    
+    
+    
+    initMouseControl();
+    init();
     loadDirectionLight();
+    
+    animate();
 </script>
 </body>  
   
