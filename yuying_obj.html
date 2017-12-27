@@ -48,7 +48,7 @@ var onError = function ( xhr ) { };
 //  
 // });  
                 var objLoader = new THREE.OBJLoader();  
-    objLoader.setMaterials( materials );   
+ 
     objLoader.load( 'yuying_obj.obj', function ( object ) {  
         mesh = object;//储存到全局变量中
         scene.add( object );  
