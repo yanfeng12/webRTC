@@ -40,21 +40,13 @@ function init() {
     scene.add( ambient );
 
     //Load the obj file
-//    loadOBJ();
-    var orbitControls = new THREE.OrbitControls(camera);
-    orbitControls.target.set(0, 0, 0);
-    orbitControls.autoRotate = true;//设置平面自动旋转
+    loadOBJ();
+//    var orbitControls = new THREE.OrbitControls(camera);
+//    orbitControls.target.set(0, 0, 0);
+//    orbitControls.autoRotate = true;//设置平面自动旋转
     window.addEventListener('mousewheel', mousewheel, false);
     
-                    var loader = new THREE.OBJLoader();//在init函数中，创建loader变量，用于导入模型
-loader.load( "yuying_obj.obj", function ( group ) {
-  geometry = group.children[ 0 ].geometry;
-  geometry.attributes.uv2 = geometry.attributes.uv;
-  geometry.center();
-  mesh = new THREE.Mesh( geometry, materialNormal );
-  mesh.scale.multiplyScalar( 25 );
-  scene.add( mesh );
-  } );
+
 }
 
 var loadDirectionLight=function(){
@@ -62,16 +54,16 @@ var loadDirectionLight=function(){
     directionalLight.position.set( 0, 0, 1 );
     scene.add( directionalLight );
 }
-//var loadOBJ = function() {
-//    //Manager from ThreeJs to track a loader and its status
-//    var manager = new THREE.LoadingManager();
-//    //Loader for Obj from Three.js
-//    var loader = new THREE.OBJLoader(manager);
-//    //Launch loading of the obj file, addBananaInScene is the callback when it's ready
-//    /*   loader.setPath("/resource/template/spoc/normal/scripts/three/"); */
-//    loader.load('yuying_obj.obj', addBananaInScene,onProgress);
-//
-//};
+var loadOBJ = function() {
+    //Manager from ThreeJs to track a loader and its status
+    var manager = new THREE.LoadingManager();
+    //Loader for Obj from Three.js
+    var loader = new THREE.OBJLoader(manager);
+    //Launch loading of the obj file, addBananaInScene is the callback when it's ready
+    /*   loader.setPath("/resource/template/spoc/normal/scripts/three/"); */
+    loader.load('yuying_obj.obj', addBananaInScene,onProgress);
+
+};
 
 
 var addBananaInScene = function(object) {
