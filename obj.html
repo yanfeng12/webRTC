@@ -45,6 +45,16 @@ function init() {
     orbitControls.target.set(0, 0, 0);
     orbitControls.autoRotate = true;//设置平面自动旋转
     window.addEventListener('mousewheel', mousewheel, false);
+    
+                    var loader = new THREE.OBJLoader();//在init函数中，创建loader变量，用于导入模型
+loader.load( "yuying_obj.obj", function ( group ) {
+  geometry = group.children[ 0 ].geometry;
+  geometry.attributes.uv2 = geometry.attributes.uv;
+  geometry.center();
+  mesh = new THREE.Mesh( geometry, materialNormal );
+  mesh.scale.multiplyScalar( 25 );
+  scene.add( mesh );
+  } );
 }
 
 var loadDirectionLight=function(){
@@ -62,17 +72,7 @@ var loadDirectionLight=function(){
 //    loader.load('yuying_obj.obj', addBananaInScene,onProgress);
 //
 //};
-                var loader = new THREE.OBJLoader();//在init函数中，创建loader变量，用于导入模型
-                loader.load('yuying_obj.obj', function(obj) {//第一个表示模型路径，第二个表示完成导入后的回调函数，一般我们需要在这个回调函数中将导入的模型添加到场景中
-                    obj.traverse(function(child) {
-                        if (child instanceof THREE.Mesh) {
-                            child.material.side = THREE.DoubleSide;
-                        }
-                    });
-                
-                    mesh = obj;//储存到全局变量中
-                    scene.add(obj);//将导入的模型添加到场景中
-                });
+
 
 var addBananaInScene = function(object) {
     //设置模型的中心在模型的中点
