@@ -40,13 +40,24 @@ function init() {
     scene.add( ambient );
 
     //Load the obj file
-    loadOBJ();
+//    loadOBJ();
 //    var orbitControls = new THREE.OrbitControls(camera);
 //    orbitControls.target.set(0, 0, 0);
 //    orbitControls.autoRotate = true;//设置平面自动旋转
     window.addEventListener('mousewheel', mousewheel, false);
     
 
+     var loader = new THREE.OBJLoader();//创建obj模型加载器对象
+    loader.load("yuying_obj.obj",obj);//加载obj完成后执行函数stl()
+    //stl加载完成后等待执行的函数
+    function obj(object3D) {
+        object3D.scale.set(100,100,100);//放大object3D对象
+        var material=new THREE.MeshLambertMaterial({color:0xff00ff});//材质对象
+        object3D.children.forEach(function (child) {
+            child.material = material;//object3D对象的子对象网格模型赋予材质对象
+        });
+        scene.add(object3D);//网格模型添加到场景中
+    }
 }
 
 var loadDirectionLight=function(){
