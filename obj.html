@@ -71,7 +71,7 @@ var addBananaInScene = function(object) {
     //设置模型的中心在模型的中点
     banana = object;
     banana.children[0].geometry.computeBoundingBox();
-    banana.rotation.x = THREE.Math.degToRad( 90 );
+//    banana.rotation.x = THREE.Math.degToRad( 90 );
     banana.children[0].geometry.center()
     helper = new THREE.BoxHelper(banana, 0x0000000);
     helper.update();
