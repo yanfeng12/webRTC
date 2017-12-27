@@ -72,7 +72,7 @@ var addBananaInScene = function(object) {
     banana.children[0].geometry.computeBoundingBox();
     banana.rotation.x = THREE.Math.degToRad( 90 );
     banana.children[0].geometry.center()
-    helper = new THREE.BoundingBoxHelper(banana, 0x0000000);
+    helper = new THREE.BoxHelper(banana, 0x0000000);
     helper.update();
     //设置结束
     //Move the banana in the scene
