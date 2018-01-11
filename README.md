@@ -1,17 +1,14 @@
-# Animation-Controls
-Example of using aframe-extras animation-mixer component with json model.
+# HTML5网页调用摄像头以及three.JS的一些
+###首先说明:我是在毫无HTML5开发经验的情况下弄这个的.
+##抓屏获取图像流，并上传到服务器 QRcodeDecode.html
+##测试地址:https://yanfeng12.github.io/webRTC/QRcodeDecode.html
 
-The example shows how to smoothly transion between different animation states of a character model exported from blender as json. Just hover the reticle over the shiny words to trigger different animation states.
+##three.js加载obj模型obj.html
+##测试地址:https://yanfeng12.github.io/webRTC/obj.html
 
-View the working example here: [Animation Controls](https://rexraptor08.github.io/animation-controls/)
+##基于three.JS的一个小飞机在天上飞The Making of “The Aviator”.html
 
-You can learn more about the animation-mixer created by [Don McCurdy](https://github.com/donmccurdy) at this link: [animation-mixer](https://github.com/donmccurdy/aframe-extras/blob/master/src/loaders/README.md).
 
-For help on learning how to get a workflow going in blender I found these two tutorials to be quite helpful.
-
-[Arturo Paracuellos](https://github.com/arturitu) has a good tutorial on how to export from blender using the THREE exporter plugin. You can find his tutorial here: [Workflow: Animation from Blender to three.js](http://unboring.net/workflows/animation.html).
-
-To learn how to create and import animation actions to your character see this great little tutorial: [Creating and Editing Actions](https://www.youtube.com/watch?v=Gb152Qncn2s)
 
 
 
