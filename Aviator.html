@@ -49,62 +49,16 @@ function init() {
    document.addEventListener('mousemove', handleMouseMove, false);
 }
     
-    var video, canvas, context, imageData;
     
     
     
-       if (navigator.mediaDevices === undefined) {
-        navigator.mediaDevices = {};
-    }
-    if (navigator.getUserMedia === undefined) {
-        navigator.getUserMedia = function(constraints) {
-            var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-            if (!getUserMedia) {
-                return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-            }
-            return new Promise(function(resolve, reject) {
-                getUserMedia.call(navigator, constraints, resolve, reject);
-            });
-        }
-    }
-window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
-        var mediaOpts = {
-            audio: false,
-            // Prefer camera resolution nearest to 1280x720.
-            video: true,
-        }
-            function successFunc(stream) {
-                var video = document.querySelector('video');
-                if ("srcObject" in video) {
-                    video.srcObject = stream
-                } else {
-                    video.src = window.URL && window.URL.createObjectURL(stream) || stream
-                }
-                video.play();
-            }
-            function errorFunc(err) {
-                alert(err.name);
-            }
+    
 
-            MediaErr = function (error)  
-        {               
-            if (error.PERMISSION_DENIED)  
-            {  
-                 alert('用户拒绝了浏览器请求媒体的权限', '提示');  
-            } else if (error.NOT_SUPPORTED_ERROR) {  
-                 alert('对不起，您的浏览器不支持拍照功能，请使用其他浏览器', '提示');  
-            } else if (error.MANDATORY_UNSATISFIED_ERROR) {  
-                 alert('指定的媒体类型未接收到媒体流', '提示');  
-            } else {  
-                 alert('系统未能获取到摄像头，请确保摄像头已正确安装。或尝试刷新页面，重试', '提示');  
-            }  
-        };  
-            navigator.getUserMedia(mediaOpts, successFunc, MediaErr);
     
     
     
     
-    
+    var video, canvas, context, imageData;
     var scene,
 		camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH,
 		renderer, container;
@@ -172,7 +126,7 @@ function createScene() {
 	container = document.getElementById('world');
 	container.appendChild(renderer.domElement);
 	
-      video = document.getElementById("video")
+  video = document.getElementById("video")
   canvas = document.createElement("canvas")
   canvas.width = parseInt(container.style.width)
   canvas.height = parseInt(container.style.height)
@@ -496,7 +450,53 @@ function normalize(v,vmin,vmax,tmin, tmax){
    var tv = tmin + (pc*dt);
    return tv;
 }
+       if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {};
+    }
+    if (navigator.getUserMedia === undefined) {
+        navigator.getUserMedia = function(constraints) {
+            var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            if (!getUserMedia) {
+                return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+            }
+            return new Promise(function(resolve, reject) {
+                getUserMedia.call(navigator, constraints, resolve, reject);
+            });
+        }
+    }
+window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
+        var mediaOpts = {
+            audio: false,
+            // Prefer camera resolution nearest to 1280x720.
+            video: true,
+        }
+            function successFunc(stream) {
+                var video = document.querySelector('video');
+                if ("srcObject" in video) {
+                    video.srcObject = stream
+                } else {
+                    video.src = window.URL && window.URL.createObjectURL(stream) || stream
+                }
+                video.play();
+            }
+            function errorFunc(err) {
+                alert(err.name);
+            }
 
+            MediaErr = function (error)  
+        {               
+            if (error.PERMISSION_DENIED)  
+            {  
+                 alert('用户拒绝了浏览器请求媒体的权限', '提示');  
+            } else if (error.NOT_SUPPORTED_ERROR) {  
+                 alert('对不起，您的浏览器不支持拍照功能，请使用其他浏览器', '提示');  
+            } else if (error.MANDATORY_UNSATISFIED_ERROR) {  
+                 alert('指定的媒体类型未接收到媒体流', '提示');  
+            } else {  
+                 alert('系统未能获取到摄像头，请确保摄像头已正确安装。或尝试刷新页面，重试', '提示');  
+            }  
+        };  
+            navigator.getUserMedia(mediaOpts, successFunc, MediaErr);
 </script>
 </body>  
   
