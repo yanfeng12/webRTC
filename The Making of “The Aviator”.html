@@ -10,61 +10,11 @@
   
 <body> 
 <!--添加一个元素作为容器。-->
-<video id="world" width=100% height=100% autoplay>  
-</video>  
+<div style="position:absolute; width:100%; height:100%; overflow:hidden; background:-webkit-linear-gradient(#e4e0ba, #f7d9aa); background: linear-gradient(#e4e0ba, #f7d9aa);" id="world">
+<video id="video" width=100% height=100% autoplay>  
+</video> 
+</div>
 <script>
-    
-    var promisifiedOldGUM = function(constraints) {
-
-  // First get ahold of getUserMedia, if present
-  var getUserMedia = (navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia);
-
-  // Some browsers just don't implement it - return a rejected promise with an error
-  // to keep a consistent interface
-  if(!getUserMedia) {
-    return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-  }
-
-  // Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-  return new Promise(function(resolve, reject) {
-    getUserMedia.call(navigator, constraints, resolve, reject);
-  });
-		
-}
-
-// Older browsers might not implement mediaDevices at all, so we set an empty object first
-if(navigator.mediaDevices === undefined) {
-  navigator.mediaDevices = {};
-}
-
-// Some browsers partially implement mediaDevices. We can't just assign an object
-// with getUserMedia as it would overwrite existing properties.
-// Here, we will just add the getUserMedia property if it's missing.
-if(navigator.mediaDevices.getUserMedia === undefined) {
-  navigator.mediaDevices.getUserMedia = promisifiedOldGUM;
-}
-
-
-// Prefer camera resolution nearest to 1280x720.
-var constraints = { audio: true, video: { width: 1280, height: 720 } };
-
-navigator.mediaDevices.getUserMedia(constraints)
-.then(function(stream) {
-  var video = document.querySelector('video');
-  video.src = window.URL.createObjectURL(stream);
-  video.onloadedmetadata = function(e) {
-    video.play();
-  };
-})
-.catch(function(err) {
-  console.log(err.name + ": " + err.message);
-});
-    
-    
-    
-    
     var Colors = {
    red:0xf25346,    
    white:0xd8d0d1,  
@@ -86,7 +36,58 @@ function init() {
    createSky(); 
    // 调用循环函数，在每帧更新对象的位置和渲染场景
    loop();
+    
+       //添加监听器，检测鼠标是否有移动
+   document.addEventListener('mousemove', handleMouseMove, false);
 }
+    
+    
+        if (navigator.mediaDevices === undefined) {
+        navigator.mediaDevices = {};
+    }
+    if (navigator.getUserMedia === undefined) {
+        navigator.getUserMedia = function(constraints) {
+            var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            if (!getUserMedia) {
+                return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+            }
+            return new Promise(function(resolve, reject) {
+                getUserMedia.call(navigator, constraints, resolve, reject);
+            });
+        }
+    }
+window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
+        var mediaOpts = {
+            audio: false,
+            // Prefer camera resolution nearest to 1280x720.
+            video: true,
+        }
+            function successFunc(stream) {
+                var video = document.querySelector('video');
+                if ("srcObject" in video) {
+                    video.srcObject = stream
+                } else {
+                    video.src = window.URL && window.URL.createObjectURL(stream) || stream
+                }
+                video.play();
+            }
+            function errorFunc(err) {
+                alert(err.name);
+            }
+
+            navigator.getUserMedia(mediaOpts, successFunc, MediaErr);
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     var scene,
 		camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH,
@@ -148,6 +149,7 @@ function createScene() {
     //打开渲染器的阴影地图
 	renderer.shadowMap.enabled = true;
 	
+    // 在 HTML 创建的容器中添加渲染器的 DOM 元素
 	// Add the DOM element of the renderer to the 
 	// container we created in the HTML
 	container = document.getElementById('world');
@@ -415,15 +417,60 @@ function createPlane(){
 }
 function loop(){
    // 使螺旋桨旋转并转动大海和云
+    //无限循环
    airplane.propeller.rotation.x += 0.3;
    sea.mesh.rotation.z += .005;
    sky.mesh.rotation.z += .01;
 
+    // 更新每帧的飞机
+   updatePlane();
+    
    // 渲染场景
    renderer.render(scene, camera);
 
    // 重新调用 render() 函数
+   //将渲染器的 render() 函数移动到 loop() 函数中。因为每次修改物体的位置或颜色之类的属性就需要重新调用一次 render() 函数。
    requestAnimationFrame(loop);
+}
+var mousePos={x:0, y:0};
+
+// mousemove 事件处理函数
+
+function handleMouseMove(event) {
+
+   // 这里我把接收到的鼠标位置的值转换成归一化值，在-1与1之间变化 
+   // 这是x轴的公式:
+
+   var tx = -1 + (event.clientX / WIDTH)*2;
+
+   // 对于 y 轴，我们需要一个逆公式
+   // 因为 2D 的 y 轴与 3D 的 y 轴方向相反
+
+   var ty = 1 - (event.clientY / HEIGHT)*2;
+   mousePos = {x:tx, y:ty};
+}
+function updatePlane(){
+
+   // 让我们在x轴上-100至100之间和y轴25至175之间移动飞机
+   // 根据鼠标的位置在-1与1之间的范围，我们使用的 normalize 函数实现（如下）
+
+   var targetX = normalize(mousePos.x, -1, 1, -100, 100);
+   var targetY = normalize(mousePos.y, -1, 1, 25, 175);
+
+   // 更新飞机的位置
+   airplane.mesh.position.y = targetY;
+   airplane.mesh.position.x = targetX;
+   airplane.propeller.rotation.x += 0.3;
+}
+
+function normalize(v,vmin,vmax,tmin, tmax){
+
+   var nv = Math.max(Math.min(v,vmax), vmin);
+   var dv = vmax-vmin;
+   var pc = (nv-vmin)/dv;
+   var dt = tmax-tmin;
+   var tv = tmin + (pc*dt);
+   return tv;
 }
 
 </script>
