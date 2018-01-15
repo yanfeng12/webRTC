@@ -78,6 +78,19 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
                 alert(err.name);
             }
 
+            MediaErr = function (error)  
+        {               
+            if (error.PERMISSION_DENIED)  
+            {  
+                 alert('用户拒绝了浏览器请求媒体的权限', '提示');  
+            } else if (error.NOT_SUPPORTED_ERROR) {  
+                 alert('对不起，您的浏览器不支持拍照功能，请使用其他浏览器', '提示');  
+            } else if (error.MANDATORY_UNSATISFIED_ERROR) {  
+                 alert('指定的媒体类型未接收到媒体流', '提示');  
+            } else {  
+                 alert('系统未能获取到摄像头，请确保摄像头已正确安装。或尝试刷新页面，重试', '提示');  
+            }  
+        };  
             navigator.getUserMedia(mediaOpts, successFunc, MediaErr);
     
     
