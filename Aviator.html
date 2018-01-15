@@ -471,19 +471,13 @@ window.URL = (window.URL || window.webkitURL || window.mozURL || window.msURL);
             video: true,
         }
             function successFunc(stream) {
+                video = document.getElementById("video")
 //                var video = document.querySelector('video');
-//                if ("srcObject" in video) {
-//                    video.srcObject = stream
-//                } else {
-//                    video.src = window.URL && window.URL.createObjectURL(stream) || stream
-//                }
-                if (window.URL) {
-        video.src = window.URL.createObjectURL(stream)
-      } else if (video.mozSrcObject !== undefined) {
-        video.mozSrcObject = stream
-      } else {
-        video.src = stream
-      }
+                if ("srcObject" in video) {
+                    video.srcObject = stream
+                } else {
+                    video.src = window.URL && window.URL.createObjectURL(stream) || stream
+                }
                 video.play();
             }
             function errorFunc(err) {
