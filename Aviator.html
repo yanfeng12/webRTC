@@ -16,8 +16,12 @@
 </div>
 
 -->
-<video id="video" width=window.innerWidth height=window.innerHeight autoplay playsinline -webkit-playsinline>  
+<div  id="world"></div>
+<!--
+<canvas id="canvas" width="640" height="480"></canvas>
+<video id="video" autoplay>  
 </video> 
+-->
 <script>
     var Colors = {
    red:0xf25346,    
@@ -45,7 +49,7 @@ function init() {
    document.addEventListener('mousemove', handleMouseMove, false);
 }
     
-    
+    var video, canvas, context, imageData;
     
     
     
@@ -162,11 +166,19 @@ function createScene() {
 	renderer.shadowMap.enabled = true;
 	
     // 在 HTML 创建的容器中添加渲染器的 DOM 元素
+    
 	// Add the DOM element of the renderer to the 
 	// container we created in the HTML
-	container = document.getElementById('video');
+	container = document.getElementById('world');
 	container.appendChild(renderer.domElement);
 	
+      video = document.getElementById("video")
+  canvas = document.createElement("canvas")
+  canvas.width = parseInt(container.style.width)
+  canvas.height = parseInt(container.style.height)
+  canvas.id = 'bg'
+  context = canvas.getContext("2d")
+    container.appendChild(canvas)
 	// Listen to the screen: if the user resizes it
 	// we have to update the camera and the renderer size
 	window.addEventListener('resize', handleWindowResize, false);
