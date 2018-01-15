@@ -16,6 +16,7 @@
 </div>
 
 -->
+<!--video放于下方-->
 <video style="position: fixed; right: 0; bottom: 0; min-width: 100%; min-height: 100%; width: auto;height: auto;z-index: -100;" id="video" autoplay></video>
 
 <div  id="world"></div>
@@ -50,15 +51,6 @@ function init() {
        //添加监听器，检测鼠标是否有移动
    document.addEventListener('mousemove', handleMouseMove, false);
 }
-    
-    
-    
-    
-    
-
-    
-    
-    
     
     var video, canvas, context, imageData;
     var scene,
@@ -150,6 +142,8 @@ function createScene() {
     //光源
 var hemisphereLight, shadowLight;
 function createLights() {
+    // 环境光源修改场景中的全局颜色和使阴影更加柔和
+ambientLight = new THREE.AmbientLight(0xdc8874, .5);scene.add(ambientLight);
    // 半球光就是渐变的光；
    // 第一个参数是天空的颜色，第二个参数是地上的颜色，第三个参数是光源的强度
    hemisphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000, .9);
@@ -184,27 +178,74 @@ function createLights() {
 }
 //首先定义一个大海对象
 Sea = function(){
-
-   // 创建一个圆柱几何体
-   // 参数为：顶面半径，底面半径，高度，半径分段，高度分段
    var geom = new THREE.CylinderGeometry(600,600,800,40,10);
-
-   // 在 x 轴旋转几何体
    geom.applyMatrix(new THREE.Matrix4().makeRotationX(-Math.PI/2));
 
-   // 创建材质
+   // 重点：通过合并顶点，我们确保海浪的连续性
+   geom.mergeVertices();
+
+   // 获得顶点
+   var l = geom.vertices.length;
+
+   // 创建一个新的数组存储与每个顶点关联的值：
+   this.waves = [];
+
+   for (var i=0; i<l; i++){
+       // 获取每个顶点
+       var v = geom.vertices[i];
+
+       // 存储一些关联的数值
+       this.waves.push({y:v.y,
+                        x:v.x,
+                        z:v.z,
+                        // 随机角度
+                        ang:Math.random()*Math.PI*2,
+                        // 随机距离
+                        amp:5 + Math.random()*15,
+                        // 在0.016至0.048度/帧之间的随机速度
+                        speed:0.016 + Math.random()*0.032
+       });
+   };
    var mat = new THREE.MeshPhongMaterial({
        color:Colors.blue,
        transparent:true,
-       opacity:.6,
+       opacity:.8,
        shading:THREE.FlatShading,
    });
 
-   // 为了在 Three.js 创建一个物体，我们必须创建网格用来组合几何体和一些材质 
    this.mesh = new THREE.Mesh(geom, mat);
+   this.mesh.receiveShadow = true;
+}
 
-   // 允许大海对象接收阴影
-   this.mesh.receiveShadow = true; 
+// 现在我们创建一个在每帧可以调用的函数，用于更新顶点的位置来模拟海浪。
+
+Sea.prototype.moveWaves = function (){
+
+   // 获取顶点
+   var verts = this.mesh.geometry.vertices;
+   var l = verts.length;
+
+   for (var i=0; i<l; i++){
+       var v = verts[i];
+
+       // 获取关联的值
+       var vprops = this.waves[i];
+
+       // 更新顶点的位置
+       v.x = vprops.x + Math.cos(vprops.ang)*vprops.amp;
+       v.y = vprops.y + Math.sin(vprops.ang)*vprops.amp;
+
+       // 下一帧自增一个角度
+       vprops.ang += vprops.speed;
+   }
+
+   // 告诉渲染器代表大海的几何体发生改变
+   // 事实上，为了维持最好的性能
+   // Three.js 会缓存几何体和忽略一些修改
+   // 除非加上这句
+   this.mesh.geometry.verticesNeedUpdate=true;
+
+   sea.mesh.rotation.z += .005;
 }
 
 //实例化大海对象，并添加至场景
@@ -316,16 +357,27 @@ var AirPlane = function() {
 
    this.mesh = new THREE.Object3D();
 
-   // 创建机舱
-   var geomCockpit = new THREE.BoxGeometry(60, 50, 50, 1, 1, 1);
-   var matCockpit = new THREE.MeshPhongMaterial({
-       color: Colors.red,
-       shading: THREE.FlatShading
-   });
-   var cockpit = new THREE.Mesh(geomCockpit, matCockpit);
-   cockpit.castShadow = true;
-   cockpit.receiveShadow = true;
-   this.mesh.add(cockpit);
+// 驾驶舱
+
+var geomCockpit = new THREE.BoxGeometry(80,50,50,1,1,1);
+var matCockpit = new THREE.MeshPhongMaterial({color:Colors.red, shading:THREE.FlatShading});
+
+// 我们可以通过访问形状中顶点数组中一组特定的顶点
+// 然后移动它的 x, y, z 属性:
+geomCockpit.vertices[4].y-=10;
+geomCockpit.vertices[4].z+=20;
+geomCockpit.vertices[5].y-=10;
+geomCockpit.vertices[5].z-=20;
+geomCockpit.vertices[6].y+=30;
+geomCockpit.vertices[6].z+=20;
+geomCockpit.vertices[7].y+=30;
+geomCockpit.vertices[7].z-=20;
+
+var cockpit = new THREE.Mesh(geomCockpit, matCockpit);
+cockpit.castShadow = true;
+cockpit.receiveShadow = true;
+this.mesh.add(cockpit);
+
 
    // 创建引擎
    var geomEngine = new THREE.BoxGeometry(20, 50, 50, 1, 1, 1);
@@ -386,6 +438,11 @@ var AirPlane = function() {
    this.propeller.add(blade);
    this.propeller.position.set(50, 0, 0);
    this.mesh.add(this.propeller);
+    
+    //添加飞行员
+  this.pilot = new Pilot();
+  this.pilot.mesh.position.set(-10,27,0);
+  this.mesh.add(this.pilot.mesh);
 };
 var airplane;
 
@@ -395,6 +452,110 @@ function createPlane(){
    airplane.mesh.position.y = 100;
    scene.add(airplane.mesh);
 }
+    //创建飞行员
+    var Pilot = function(){
+   this.mesh = new THREE.Object3D();
+   this.mesh.name = "pilot";
+
+   // angleHairs是用于后面头发的动画的属性 
+   this.angleHairs=0;
+
+   // 飞行员的身体
+   var bodyGeom = new THREE.BoxGeometry(15,15,15);
+   var bodyMat = new THREE.MeshPhongMaterial({color:Colors.brown, shading:THREE.FlatShading});
+   var body = new THREE.Mesh(bodyGeom, bodyMat);
+   body.position.set(2,-12,0);
+   this.mesh.add(body);
+
+   // 飞行员的脸部
+   var faceGeom = new THREE.BoxGeometry(10,10,10);
+   var faceMat = new THREE.MeshLambertMaterial({color:Colors.pink});
+   var face = new THREE.Mesh(faceGeom, faceMat);
+   this.mesh.add(face);
+
+   // 飞行员的头发
+   var hairGeom = new THREE.BoxGeometry(4,4,4);
+   var hairMat = new THREE.MeshLambertMaterial({color:Colors.brown});
+   var hair = new THREE.Mesh(hairGeom, hairMat);
+   // 调整头发的形状至底部的边界，这将使它更容易扩展。
+   hair.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,2,0));
+
+   // 创建一个头发的容器
+   var hairs = new THREE.Object3D();
+
+   // 创建一个头发顶部的容器（这会有动画效果）
+   this.hairsTop = new THREE.Object3D();
+
+   // 创建头顶的头发并放置他们在一个3*4的网格中
+   for (var i=0; i<12; i++){
+       var h = hair.clone();
+       var col = i%3;
+       var row = Math.floor(i/3);
+       var startPosZ = -4;
+       var startPosX = -4;
+       h.position.set(startPosX + row*4, 0, startPosZ + col*4);
+       this.hairsTop.add(h);
+   }
+   hairs.add(this.hairsTop);
+
+   // 创建脸庞的头发
+   var hairSideGeom = new THREE.BoxGeometry(12,4,2);
+   hairSideGeom.applyMatrix(new THREE.Matrix4().makeTranslation(-6,0,0));
+   var hairSideR = new THREE.Mesh(hairSideGeom, hairMat);
+   var hairSideL = hairSideR.clone();
+   hairSideR.position.set(8,-2,6);
+   hairSideL.position.set(8,-2,-6);
+   hairs.add(hairSideR);
+   hairs.add(hairSideL);
+
+   // 创建后脑勺的头发
+   var hairBackGeom = new THREE.BoxGeometry(2,8,10);
+   var hairBack = new THREE.Mesh(hairBackGeom, hairMat);
+   hairBack.position.set(-1,-4,0)
+   hairs.add(hairBack);
+   hairs.position.set(-5,5,0);
+
+   this.mesh.add(hairs);
+
+   var glassGeom = new THREE.BoxGeometry(5,5,5);
+   var glassMat = new THREE.MeshLambertMaterial({color:Colors.brown});
+   var glassR = new THREE.Mesh(glassGeom,glassMat);
+   glassR.position.set(6,0,3);
+   var glassL = glassR.clone();
+   glassL.position.z = -glassR.position.z;
+
+   var glassAGeom = new THREE.BoxGeometry(11,1,11);
+   var glassA = new THREE.Mesh(glassAGeom, glassMat);
+   this.mesh.add(glassR);
+   this.mesh.add(glassL);
+   this.mesh.add(glassA);
+
+   var earGeom = new THREE.BoxGeometry(2,3,2);
+   var earL = new THREE.Mesh(earGeom,faceMat);
+   earL.position.set(0,0,-6);
+   var earR = earL.clone();
+   earR.position.set(0,0,6);
+   this.mesh.add(earL);
+   this.mesh.add(earR);
+ }
+
+// 移动头发
+Pilot.prototype.updateHairs = function(){
+
+   // 获得头发
+   var hairs = this.hairsTop.children;
+
+   // 根据 angleHairs 的角度更新头发
+   var l = hairs.length;
+   for (var i=0; i<l; i++){
+       var h = hairs[i];
+       // 每根头发将周期性的基础上原始大小的75%至100%之间作调整。
+       h.scale.y = .75 + Math.cos(this.angleHairs+i/3)*.25;
+   }
+   // 在下一帧增加角度
+   this.angleHairs += 0.16;
+}
+
 function loop(){
    // 使螺旋桨旋转并转动大海和云
     //无限循环
@@ -404,6 +565,13 @@ function loop(){
 
     // 更新每帧的飞机
    updatePlane();
+    
+    //更新头发
+    airplane.pilot.updateHairs();
+    
+    
+   //更新海浪
+    sea.moveWaves();
     
    // 渲染场景
    renderer.render(scene, camera);
@@ -452,6 +620,8 @@ function normalize(v,vmin,vmax,tmin, tmax){
    var tv = tmin + (pc*dt);
    return tv;
 }
+ 
+    
        if (navigator.mediaDevices === undefined) {
         navigator.mediaDevices = {};
     }
